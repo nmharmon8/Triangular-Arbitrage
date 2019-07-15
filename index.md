@@ -1,4 +1,4 @@
-# Triangular Arbitrage on Bitstamp
+# Tutorial: Triangular Arbitrage on Bitstamp
 
 This is a first draft and needs to be completed.
 
