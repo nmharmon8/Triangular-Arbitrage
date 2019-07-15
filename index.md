@@ -1,8 +1,6 @@
-# Unsupervised Stock Market Features Construction using Bidirectional Generative Adversarial Networks(BiGAN)
+# Triangular Arbitrage on Bitstamp
 Triangular Arbitrage is one of the most natural methods of Arbitrage primarily because the Arbitrage is not between exchanges, but rather it is between pairs (BTC/USD ... etc.). Traditional Arbitrage requires transferring assets between the exchanges, which is slow and painful. The longer the trades take to complete the Arbitrage, the more risk you incur (note there are methods to work around transferring assets). In Triangular Arbitrage, you increase the amount of the initial asset you own by trading through a chain of other assets, eventually trading back to the initial asset.
-
-![gan.png]({{site.baseurl}}/media/triangular-arbitrage-example.png)
-
+![triangular-arbitrage-example.png]({{site.baseurl}}/media/triangular-arbitrage-example.png)
 This example is drawn from [investopedia](https://www.investopedia.com/terms/t/triangulararbitrage.asp):
 Example of Triangular Arbitrage
 As an example, suppose you have $1 million and you are provided with the following exchange rates: EUR/USD = 0.8631, EUR/GBP = 1.4600 and USD/GBP = 1.6939.
@@ -15,8 +13,17 @@ Sell pounds for dollars: £591,164.40 x 1.6939 = $1,001,373
 Subtract the initial investment from the final amount: $1,001,373 - $1,000,000 = $1,373
 From these transactions, you would receive an arbitrage profit of $1,373 (assuming no transaction costs or taxes).      
 
-We will now write code that finds Triangular Arbitrage opportunities on Bitstamp. 
-For a full review of GANs reference the paper [Generative Adversarial Nets](https://arxiv.org/pdf/1406.2661.pdf) and tutorial for implementing a basic GAN [Generative Adversarial Nets in TensorFlow](https://wiseodd.github.io/techblog/2016/09/17/gan-tensorflow/).
+We will now write code that finds Triangular Arbitrage opportunities on Bitstamp.
+
+The Bitstamp clinet we will be using was writen by Kamil Madac, and can be found on [github](https://github.com/kmadac/bitstamp-python-client)
+
+We will start by importing the a few python libraries:
+```python3
+import bitstamp.client
+import threading
+import numpy as np
+from collections import defaultdict
+```
 
 
 
