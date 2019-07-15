@@ -1,11 +1,24 @@
 # Unsupervised Stock Market Features Construction using Bidirectional Generative Adversarial Networks(BiGAN)
-Deep Learning constructs features using only raw data. The learned representation of the data outperforms expert features for many modalities including Radio Frequency ([Convolutional Radio Modulation Recognition Networks](https://arxiv.org/pdf/1602.04105.pdf)), computer vision ([Convolutional Deep Belief Networks for Scalable Unsupervised Learning of Hierarchical Representations](https://www.cs.princeton.edu/~rajeshr/papers/icml09-ConvolutionalDeepBeliefNetworks.pdf)) and audio classification ([Unsupervised feature learning for audio classification using convolutional deep belief networks](http://www.robotics.stanford.edu/~ang/papers/nips09-AudioConvolutionalDBN.pdf)). 
-# GAN 
-In the case of Convolutional Neural Networks (CNN), the data representation is learned in a supervised fashion with respect to a task such as classification. GANs learn features in an unsupervised fashion. The competitive learning process for GANs results in more of the possible feature space being explored. This reduces the potential for features being overfitted to the training data. Since the features are constructed in an unsupervised process classification algorithms trained on the features will generalize on a smaller amount of data. In fact, GANs promote generalization beyond the training data. 
+Triangular Arbitrage is one of the most natural methods of Arbitrage primarily because the Arbitrage is not between exchanges, but rather it is between pairs (BTC/USD ... etc.). Traditional Arbitrage requires transferring assets between the exchanges, which is slow and painful. The longer the trades take to complete the Arbitrage, the more risk you incur (note there are methods to work around transferring assets). In Triangular Arbitrage, you increase the amount of the initial asset you own by trading through a chain of other assets, eventually trading back to the initial asset.
 
+![gan.png]({{site.baseurl}}/media/triangular-arbitrage-example.png)
+
+This example is drawn from [investopedia](https://www.investopedia.com/terms/t/triangulararbitrage.asp):
+Example of Triangular Arbitrage
+As an example, suppose you have $1 million and you are provided with the following exchange rates: EUR/USD = 0.8631, EUR/GBP = 1.4600 and USD/GBP = 1.6939.
+
+With these exchange rates there is an arbitrage opportunity:
+
+Sell dollars for euros: $1 million x 0.8631 = €863,100
+Sell euros for pounds: €863,100/1.4600 = £591,164.40
+Sell pounds for dollars: £591,164.40 x 1.6939 = $1,001,373
+Subtract the initial investment from the final amount: $1,001,373 - $1,000,000 = $1,373
+From these transactions, you would receive an arbitrage profit of $1,373 (assuming no transaction costs or taxes).      
+
+We will now write code that finds Triangular Arbitrage opportunities on Bitstamp. 
 For a full review of GANs reference the paper [Generative Adversarial Nets](https://arxiv.org/pdf/1406.2661.pdf) and tutorial for implementing a basic GAN [Generative Adversarial Nets in TensorFlow](https://wiseodd.github.io/techblog/2016/09/17/gan-tensorflow/).
 
-![gan.png]({{site.baseurl}}/media/g.png)
+
 
 The Generator is trained to generate data that looks like historical price data of the target stocks over a distribution. The Discriminator is trained to tell the difference between the data from the Generator and the real data. The loss from the Discriminator (how the Discriminator has learned to tell if a sample in real or fake) is used to train the Generator to defeat the Discriminator. The competition between the Generator and the Discriminator forces the Discriminator to distinguish random from real variability while the Generator learns to map a distribution into the sample space.    
 This project explores Bidirectional Generative Adversarial Networks(BiGANs) based on the paper [Adversarial Feature Learning](https://arxiv.org/pdf/1605.09782.pdf). The primary difference in the BiGAN the Discriminator learns to determine the joint probability P(X, Z) = real/fake (where X is the sample and Z is the generating distribution). This, in turn, means that the Generator learns to encode a real sample into its generating distribution.  
