@@ -1,9 +1,13 @@
 # Triangular Arbitrage on Bitstamp
+
+This is a first draft and need to be completed.
+
 Triangular Arbitrage is one of the most natural methods of Arbitrage primarily because the Arbitrage is not between exchanges, but rather it is between pairs (BTC/USD ... etc.). Traditional Arbitrage requires transferring assets between the exchanges, which is slow and painful. The longer the trades take to complete the Arbitrage, the more risk you incur (note there are methods to work around transferring assets). In Triangular Arbitrage, you increase the amount of the initial asset you own by trading through a chain of other assets, eventually trading back to the initial asset.
 ![triangular-arbitrage-example.png]({{site.baseurl}}/media/triangular-arbitrage-example.png)
+
+
 This example is drawn from [investopedia](https://www.investopedia.com/terms/t/triangulararbitrage.asp):
-Example of Triangular Arbitrage
-As an example, suppose you have $1 million and you are provided with the following exchange rates: EUR/USD = 0.8631, EUR/GBP = 1.4600 and USD/GBP = 1.6939.
+Suppose you have $1 million and you are provided with the following exchange rates: EUR/USD = 0.8631, EUR/GBP = 1.4600 and USD/GBP = 1.6939.
 
 With these exchange rates there is an arbitrage opportunity:
 
@@ -18,7 +22,7 @@ We will now write code that finds Triangular Arbitrage opportunities on Bitstamp
 The Bitstamp clinet we will be using was writen by Kamil Madac, and can be found on [github](https://github.com/kmadac/bitstamp-python-client)
 
 We will start by importing the a few python libraries:
-```python3
+```python
 import bitstamp.client
 import threading
 import numpy as np
@@ -27,13 +31,13 @@ from collections import defaultdict
 
 Kamil Madac client makes it easy to start a session with Bitstamp:
 
-```python3
+```python
 public_client = bitstamp.client.Public()
 ```
 
 We can then use this client to pull data from Bitstamp. The first thing we need to know is all the pairs that exist on the exchange:
  
- ```python3
+ ```python
  pairs = public_client.trading_pairs_info()
  ```
  
@@ -46,7 +50,7 @@ We can then use this client to pull data from Bitstamp. The first thing we need 
  
 We will use the pair information to pull down the ticker value for each pair. Because we want to get the ticker value for every pair at as close to the same time as possible we will make a multithread call to the Bitstamp:
  
-```python3
+```python
 tickers = []
 
 def get_ticker(base, quote):
@@ -70,13 +74,13 @@ for thread in threads:
 
 Next, we will define the exchange fee:
 
-```python3
+```python
 exchange_fee = 0.0025
 ```
 
 Now to compute the cost of trading through different pairs, we will build up a couple of useful data structures:
 
-```python3
+```python
 unique_symbols = set(x['base'] for x in tickers) | set(x['quote'] for x in tickers)
 conversion_rates = defaultdict(dict)
 for ticker in tickers:
@@ -97,7 +101,7 @@ All we did was create a set with each unique symbol/ticker, build a dictionary w
 
 Now comes the fun part. For simplicity, we are using three loops O(n^3) which is very....very bad. This could be better done by modifying something like Dijkstra, but it would make it harder to understand so we will do it the wrong way.  
 
-```python3
+```python
 for i in range(0, len(unique_symbols)):
   for j in range(0, len(unique_symbols)):
       for k in range(0, len(unique_symbols)):
