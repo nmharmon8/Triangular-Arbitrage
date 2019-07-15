@@ -1,6 +1,6 @@
 # Triangular Arbitrage on Bitstamp
 
-This is a first draft and need to be completed.
+This is a first draft and needs to be completed.
 
 Triangular Arbitrage is one of the most natural methods of Arbitrage primarily because the Arbitrage is not between exchanges, but rather it is between pairs (BTC/USD ... etc.). Traditional Arbitrage requires transferring assets between the exchanges, which is slow and painful. The longer the trades take to complete the Arbitrage, the more risk you incur (note there are methods to work around transferring assets). In Triangular Arbitrage, you increase the amount of the initial asset you own by trading through a chain of other assets, eventually trading back to the initial asset.
 ![triangular-arbitrage-example.png]({{site.baseurl}}/media/triangular-arbitrage-example.png)
