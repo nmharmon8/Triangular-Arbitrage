@@ -1,8 +1,6 @@
 # Tutorial: Triangular Arbitrage on Bitstamp
 
-This is a first draft and needs to be completed.
-
-Triangular Arbitrage is one of the most natural methods of Arbitrage primarily because the Arbitrage is not between exchanges, but rather it is between pairs (BTC/USD ... etc.). Traditional Arbitrage requires transferring assets between the exchanges, which is slow and painful. The longer the trades take to complete the Arbitrage, the more risk you incur (note there are methods to work around transferring assets). In Triangular Arbitrage, you increase the amount of the initial asset you own by trading through a chain of other assets, eventually trading back to the initial asset.
+Triangular Arbitrage is one of the most natural methods of Arbitrage primarily because is not between exchanges, but rather it is between pairs (BTC/USD, BTC/ETH ... etc.) on a single exchange. Traditional Arbitrage requires transferring assets between the exchanges which is slow and painful. The longer the trades take to complete the Arbitrage, the more risk you incur (though there are methods to work around transferring assets between exchanges). In Triangular Arbitrage, you increase the amount of the initial asset you own by trading through a chain of other assets, eventually trading back to the initial asset.
 ![triangular-arbitrage-example.png]({{site.baseurl}}/media/triangular-arbitrage-example.png)
 
 
@@ -19,7 +17,7 @@ From these transactions, you would receive an arbitrage profit of $1,373 (assumi
 
 We will now write code that finds Triangular Arbitrage opportunities on Bitstamp.
 
-The Bitstamp clinet we will be using was writen by Kamil Madac, and can be found on [github](https://github.com/kmadac/bitstamp-python-client)
+The Bitstamp client we will be using was writen by Kamil Madac, and can be found on [github](https://github.com/kmadac/bitstamp-python-client)
 
 We will start by importing the a few python libraries:
 ```python
@@ -29,7 +27,7 @@ import numpy as np
 from collections import defaultdict
 ```
 
-Kamil Madac client makes it easy to start a session with Bitstamp:
+Kamil Madac's client makes it easy to start a session with Bitstamp:
 
 ```python
 public_client = bitstamp.client.Public()
@@ -72,13 +70,13 @@ for thread in threads:
     thread.join()
 ```
 
-Next, we will define the exchange fee:
+Next, we will define the exchange fee as a flat 0.25% per trade:
 
 ```python
 exchange_fee = 0.0025
 ```
 
-Now to compute the cost of trading through different pairs, we will build up a couple of useful data structures:
+Now to compute the cost of trading through different pairs, we will build up a couple of useful data structures: a set with each unique symbol/ticker, a dictionary with the conversion rates, and an index for each symbol/ticker. 
 
 ```python
 unique_symbols = set(x['base'] for x in tickers) | set(x['quote'] for x in tickers)
@@ -97,33 +95,43 @@ for ticker in tickers:
 graph_symbol_reverse_lookup = {y:x for x, y in graph_symbol_lookup.items()}
 ```
 
-All we did was create a set with each unique symbol/ticker, build a dictionary with the conversion rates, and assign an index to each symbol/ticker. 
-
 Now comes the fun part. For simplicity, we are using three loops O(n^3) which is very....very bad. This could be better done by modifying something like Dijkstra, but it would make it harder to understand so we will do it the wrong way.  
+
+Loops through every combination of currency pairs and computes the profit or loss by trading through them if the profit loss is positive then you found an opportunity for Triangular Arbitrage.
 
 ```python
 for i in range(0, len(unique_symbols)):
   for j in range(0, len(unique_symbols)):
       for k in range(0, len(unique_symbols)):
+      
+          #Make sure we have selected 3 unique coins by index
           if len(set([i, j, k])) != 3:
               continue
+          
+          #Load the coins from the graph
           c1 = graph_symbol_reverse_lookup[i]
           c2 = graph_symbol_reverse_lookup[j]
           c3 = graph_symbol_reverse_lookup[k]
-          #Assumming that we are trading one coin
+          
+          #We start with 1.0 coins of c1
           initial_equity = current_equity = 1
+          
+          #Some conversions dont exist, skip these
           if c2 not in conversion_rates[c1] or c3 not in conversion_rates[c2] or c1 not in conversion_rates[c3]:
               #No conversion is avalible 
               #print('No conversion for {} -> {} -> {} -> {}'.format(c1, c2, c3, c1))
               continue 
+          
+          #Trade through the selected coins c1->c2->c3->c1, purchasing at the 'ask' price and paying the fee for each trade
           current_equity = current_equity * conversion_rates[c1][c2]['ask'] - current_equity*exchange_fee
           current_equity = current_equity * conversion_rates[c2][c3]['ask'] - current_equity*exchange_fee
           current_equity = current_equity * conversion_rates[c3][c1]['ask'] - current_equity*exchange_fee
-          profit_loss = current_equity - initial_equity
+
+          #Profit/loss is in terms of the starting coin
+          profit_loss = current_equity - initial_equity                    
           print('{} -> {} -> {} -> {} profit/loss = {} {}'.format(c1, c2, c3, c1, c1, profit_loss))
 ```
 
-This loops through every combination of currency pairs and computes the profit or loss by trading through them if the profit loss is positive then you found an opportunity for Triangular Arbitrage.
 
 What we have just done is the easy part. Now you need to successfully execute the three trades before any of the prices change. This will require looking at the depth of the order book so, you know how much you can trade as well as holding each currency so that you can simultaneously execute all the orders. Have fun. 
 
