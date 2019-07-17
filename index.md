@@ -20,7 +20,7 @@ We will now write code that finds Triangular Arbitrage opportunities on Bitstamp
 
 The Bitstamp client we will be using was writen by Kamil Madac, and can be found on [github](https://github.com/kmadac/bitstamp-python-client)
 
-We will start by importing the a few python libraries:
+We will start by importing a few python libraries:
 ```python
 import bitstamp.client
 import threading
@@ -40,7 +40,7 @@ We can then use this client to pull data from Bitstamp. The first thing we need 
  pairs = public_client.trading_pairs_info()
  ```
  
- This call will return a list of dictionaries as follows:
+which returns a list of dictionaries:
  
  ```python3
  [ {'base_decimals': 8, 'minimum_order': '5.0 USD', 'name': 'LTC/USD', 'counter_decimals': 2,
