@@ -124,9 +124,12 @@ for i in range(0, len(unique_symbols)):
               continue 
           
           #Trade through the selected coins c1->c2->c3->c1, purchasing at the 'ask' price and paying the fee for each trade
-          current_equity = current_equity * conversion_rates[c1][c2]['ask'] - current_equity*exchange_fee
-          current_equity = current_equity * conversion_rates[c2][c3]['ask'] - current_equity*exchange_fee
-          current_equity = current_equity * conversion_rates[c3][c1]['ask'] - current_equity*exchange_fee
+          current_equity -= current_equity*exchange_fee
+          current_equity = current_equity * conversion_rates[c1][c2]['ask'] 
+          current_equity -= current_equity*exchange_fee
+          current_equity = current_equity * conversion_rates[c2][c3]['ask']
+          current_equity -= current_equity*exchange_fee
+          current_equity = current_equity * conversion_rates[c3][c1]['ask']
 
           #Profit/loss is in terms of the starting coin
           profit_loss = current_equity - initial_equity                    
